@@ -1,4 +1,4 @@
-package client;
+package assignment2;
 
 import java.io.*;
 import java.net.*;
@@ -6,9 +6,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Date;
 import javax.swing.*;
-import server.Server;
 
-public class Client extends JFrame {
+public class AreaOfCircle extends JFrame {
   // Text field for receiving radius
   private JTextField jtf = new JTextField();
   // Text area to display contents
@@ -21,10 +20,10 @@ public class Client extends JFrame {
   private DataInputStream fromServer;
 
   public static void main(String[] args) {
-    new Client();
+    new AreaOfCircle();
   }
 
-  public Client() {
+  public AreaOfCircle() {
     // Panel p to hold the label and text field
     JPanel p = new JPanel();
     // JFrame frame = new JFrame();
@@ -50,11 +49,6 @@ public class Client extends JFrame {
       fromServer = new DataInputStream(socket.getInputStream());
       toServer = new DataOutputStream(socket.getOutputStream());
 
-        while (true) {
-          String message = fromServer.readUTF();
-          if (!message.isEmpty()) jta.append("[server]: " + message + "\n");
-        }
-
     }
     catch (IOException ex) {
       jta.append(ex.toString() + '\n');
@@ -72,9 +66,17 @@ public class Client extends JFrame {
     @Override
     public void actionPerformed(ActionEvent e) {
       try {
+        // Get the radius from the text field
         double radius = Double.parseDouble(jtf.getText().trim());
+        // Send the radius to the server
         toServer.writeDouble(radius);
         toServer.flush();
+        // Get area from the server
+        double area = fromServer.readDouble();
+        // Display to the text area
+        jta.append("Radius is " + radius + "\n");
+        jta.append("Area received from the server is "
+                + area + '\n');
       }
       catch (IOException ex) {
         System.err.println(ex);

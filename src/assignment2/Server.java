@@ -58,9 +58,6 @@ public class Server extends JFrame {
                         x++;
                     }
                     rs.close();
-                    // Here is the sort out
-                    for(int i = 0; i < students.length; ++i){
-                    System.out.println(students[i]);}
                     Socket s1=serverSocket.accept();
                     myClient c = new myClient(s1);
                     c.start();
@@ -73,10 +70,13 @@ public class Server extends JFrame {
         private class myClient extends Thread {
             //The socket the client is connected through
             private Socket socket;
+            private ResultSet rs2;
+            private String lName;
+            private String fName;
             //The ip address of the client
             private InetAddress address;
             private Boolean loggedin = false;
-
+            private int studNo = 0;
             public myClient(Socket socket) throws IOException, SQLException {
                 // Declare & Initialise input/output streams
                 inputFromClient = new DataInputStream(socket.getInputStream());
@@ -84,7 +84,7 @@ public class Server extends JFrame {
             }
 
             public void checkDB() throws IOException {
-               int studNo = inputFromClient.readInt();
+               studNo = inputFromClient.readInt();
                 int x = 0;
                     for (int i = 0; i < students.length; ++i) {
                         if (studNo == students[i]) {
@@ -103,12 +103,20 @@ public class Server extends JFrame {
                             if (loggedin != true) {
                                 checkDB();
                             } else if (loggedin = true){
+                                Statement myStatement = dbConnection.createStatement();
+                                rs2 = myStatement.executeQuery("select fName, lName from students where stud_no='"+studNo+"'");
+                                fName = rs2.getString("fName");
+                                lName = rs2.getString("lName");
+                                rs2.close();
+                                System.out.println(rs2);
                                 // Receive radius from the client
                                 double radius = inputFromClient.readDouble();
                                 // Compute area
                                 double area = radius * radius * Math.PI;
                                 // Send area back to the client
                                 outputToClient.writeDouble(area);
+                                outputToClient.writeUTF(fName);
+                                outputToClient.writeUTF(lName);
                                 jta.append("Radius received from client: " + radius + '\n');
                                 jta.append("Area found: " + area + '\n');
                             }

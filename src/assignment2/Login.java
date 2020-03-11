@@ -1,6 +1,5 @@
 package assignment2;
 
-import com.mysql.cj.log.Log;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,8 +7,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.util.Date;
+
 
 public class Login extends JFrame {
     private DataOutputStream toServer;
@@ -18,10 +17,11 @@ public class Login extends JFrame {
     public static void main(String[] args) {
         Login frameTabel = new Login();
     }
-    JButton blogin = new JButton("Login");
-    JPanel panel = new JPanel();
-    JTextField studentNumber = new JTextField(15);
-    JLabel labelStdNo = new JLabel("Enter Student Number: ");
+    private JButton blogin = new JButton("Login");
+    private JPanel panel = new JPanel();
+    private JTextArea jta = new JTextArea();
+    private JTextField studentNumber = new JTextField(15);
+    private JLabel labelStdNo = new JLabel("Enter Student Number: ");
 
     Login(){
         super("Client Login");
@@ -35,6 +35,7 @@ public class Login extends JFrame {
         panel.add(labelStdNo);
         panel.add(blogin);
         panel.add(studentNumber);
+        add(new JScrollPane(jta), BorderLayout.CENTER);
 
         getContentPane().add(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,12 +43,13 @@ public class Login extends JFrame {
         try {
             // Create a socket to connect to the server
             Socket socket = new Socket("localhost", 8000);
+            jta.append("Server started at " + new Date() + '\n');
             // Create an input & output streams to send & receive data from the server
             fromServer = new DataInputStream(socket.getInputStream());
             toServer = new DataOutputStream(socket.getOutputStream());
         }
         catch (IOException ex) {
-            //jta.append(ex.toString() + '\n');
+            jta.append(ex.toString() + '\n');
             System.out.println("bad command");
         }
         actionlogin();
@@ -62,14 +64,13 @@ public class Login extends JFrame {
                     toServer.flush();
 
                     int stdNo = fromServer.readInt();
+                    jta.append("Checking Student Number..." + new Date() + '\n');
                     if(studentNo == stdNo) {
-                        Client regFace =new Client();
+                        AreaOfCircle regFace =new AreaOfCircle();
                         regFace.setVisible(true);
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null,"Sorry Invalid Student Number");
-                        studentNumber.setText("");
-                        studentNumber.requestFocus();
                         Login reset =new Login();
                         reset.setVisible(true);
                         dispose();
