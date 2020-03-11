@@ -33,6 +33,7 @@ public class Client extends JFrame {
         jtf.addActionListener(new Client.Listener()); // Register listener
         setTitle("Client");
         setSize(500, 300);
+        setLocation(500,280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true); // It is necessary to show the frame here!
 

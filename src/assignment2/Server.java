@@ -24,7 +24,6 @@ public class Server extends JFrame {
         private Connection dbConnection;
         private ResultSet rs;
         public int[] students = new int[10];
-
         private int student;
         //The input and output streams to the client
         private DataInputStream inputFromClient;
@@ -40,6 +39,7 @@ public class Server extends JFrame {
             add(new JScrollPane(jta), BorderLayout.CENTER);
             setTitle("Server");
             setSize(500, 300);
+            setLocation(500,280);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setVisible(true); // It is necessary to show the frame here!
             try {
@@ -58,6 +58,7 @@ public class Server extends JFrame {
                         x++;
                     }
                     rs.close();
+                    // Here is the sort out
                     for(int i = 0; i < students.length; ++i){
                     System.out.println(students[i]);}
                     Socket s1=serverSocket.accept();
@@ -74,20 +75,34 @@ public class Server extends JFrame {
             private Socket socket;
             //The ip address of the client
             private InetAddress address;
+            private Boolean loggedin = false;
 
             public myClient(Socket socket) throws IOException, SQLException {
                 // Declare & Initialise input/output streams
                 inputFromClient = new DataInputStream(socket.getInputStream());
                 outputToClient = new DataOutputStream(socket.getOutputStream());
             }
-            /*
-             * The method that runs when the thread starts
-             */
+
+            public void checkDB() throws IOException {
+               int studNo = inputFromClient.readInt();
+                int x = 0;
+                    for (int i = 0; i < students.length; ++i) {
+                        if (studNo == students[i]) {
+                            outputToClient.writeInt(studNo);
+                            loggedin = true;
+                        }
+                    }
+                outputToClient.writeInt(x);
+            }
+
             public void run() {
                 // Send+Receive+Calculations goes here
-                    // preform results set for array
-                        try {
-                            while (true) {
+                // preform results set for array
+                    try {
+                        while (true) {
+                            if (loggedin != true) {
+                                checkDB();
+                            } else if (loggedin = true){
                                 // Receive radius from the client
                                 double radius = inputFromClient.readDouble();
                                 // Compute area
@@ -97,9 +112,12 @@ public class Server extends JFrame {
                                 jta.append("Radius received from client: " + radius + '\n');
                                 jta.append("Area found: " + area + '\n');
                             }
-                        } catch (Exception e) {
-                            System.err.println(e + " on " + socket);
                         }
-            }
+                    } catch (Exception e) {
+                        System.err.println(e + " on " + socket);
+                    }
+                }
+
         }
+
 }
