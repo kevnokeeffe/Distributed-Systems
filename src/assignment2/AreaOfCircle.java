@@ -26,9 +26,8 @@ public class AreaOfCircle extends JFrame {
   public AreaOfCircle() {
     // Panel p to hold the label and text field
     JPanel p = new JPanel();
-    // JFrame frame = new JFrame();
     p.setLayout(new BorderLayout());
-    p.add(new JLabel("Enter message"), BorderLayout.WEST);
+    p.add(new JLabel("Enter radius"), BorderLayout.WEST);
     p.add(jtf, BorderLayout.CENTER);
     jtf.setHorizontalAlignment(JTextField.RIGHT);
     p.add(send, BorderLayout.BEFORE_LINE_BEGINS);
@@ -39,7 +38,7 @@ public class AreaOfCircle extends JFrame {
 
     send.addActionListener(new Listener());
     exit.addActionListener(new ExitListener());
-    setTitle("Client");
+    setTitle("Area of Circle");
     setSize(500, 300);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setVisible(true); // It is necessary to show the frame here!

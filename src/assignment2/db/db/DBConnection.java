@@ -4,9 +4,9 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DBConnection {
-    private static String userName = "kev";
+    private static String userName = "root";
     // The password for the MySQL account.
-    private static String password = "akakok1984";
+    private static String password = "";
     // The name of the computer running MySQL.
     private static String serverName = "localhost";
     // The port of the MySQL server.
@@ -22,7 +22,7 @@ public class DBConnection {
         try {
             Properties connectionProps = new Properties();
             connectionProps.put("user", this.userName);
-            connectionProps.put("password", this.password);
+            // connectionProps.put("password", this.password);
             // Create the connection with the database
             conn = DriverManager.getConnection("jdbc:mysql://"
                             + this.serverName + ":" + this.portNumber + "/" + this.dbName,
